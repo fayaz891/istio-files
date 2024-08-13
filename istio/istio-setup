@@ -1,0 +1,139 @@
+
+
+1) install istio core and istiod in k8s
+2) istio addons for monitering, tracing and virtualization
+3) configure automatic envoy proxy enjection
+4) deploy example microservice examples
+
+
+yes | istioctl install --set profile=demo
+kubectl -n istio-system get svc
+kubectl -n istio-system get pods
+
+kubectl create namespace bookinfo
+kubectl label namespace bookinfo istio-injection=enabled
+
+kubectl get ns bookinfo --show-labels
+
+
+
+
+
+
+Now download istio and configure istioctl
+goto istio official website and get info about installation
+you will get tar file when downloaded for spcific OS
+
+# mkdir istio-installation
+# mv tar-file istio-installtion
+# cd istio-installtion
+# tar -xvf file.tar
+
+if you are on the same folder then execute[# istioctl]
+if you face some problem then set the paths (see nana istio video)
+
+
+
+
+Now install istio in minikube cluster
+
+# kubectl get ns
+no istio ns found
+
+# istioctl install
+we hv successfully install istio istiod ingress gateway
+
+# kubectl get ns
+you hv istio-system ns
+
+# kubectl get pod -n istio-system
+will get 2 pods (istio gateway and istiod)
+
+
+
+
+
+Deploy microervices application
+microservice deloy to the cluster and use istio service mesh for this microservices
+
+clone projectand minifest.yml file is on istio installtion folder
+
+# kubectl apply -f minifest.yml
+# kubectl get pods
+
+
+
+
+
+
+
+when you deploy complex microservice application in k8s ,then managing k8s data will be chellenging
+so kasten is the manager to manage your data very easier,
+ k10 is the data mangment platform
+
+kasten easily integrate with all cloud plateforms so we can easily migrate application amoung different clusters with all data
+
+so now we have istio core and microservice running k8s cluster and now each pod has one microservice container and proxy are not injected t still
+
+
+
+Now configure envoy proxy injection
+with labeled and namespace we can enabled proxy injection
+
+# kubectl get ns default --show-labels
+
+# kubectl label namespace default istio-injection=enabled            (we added label to the namespace in key:value pair)
+# kubectl get ns default --show-labels
+
+now we delete and shutdown all the services and recreate now we will have "proxy cont" too in each pod which are injected 
+
+# kubectl delete -f minifest.yml
+# kubectl get pods
+
+# kubectl apply -f minifest.yml
+
+we do nothing more we only added labeled to the name space and istio will injected proxy by automatically
+
+# kubectl get pods
+     2/2
+
+# kubectl describe pod podname
+
+
+
+
+
+
+
+install istio intigration for monitering and visualization
+
+istio collect matrics and logs
+
+in istio folder => we have samples folder => there we hv addons folder there we hv all configuration files of addons
+
+to apply these services(addons services) we need to apply each that file which we need
+like
+
+this is for kiali
+# kubectl apply -f istio-1-9-0/samples/addons/kiali.yaml
+
+if need all services then 
+# kubectl apply -f istio-1-9-0/samples/addons
+
+# kubectl get pod -n istio-system
+we get kiali ,jaeger,promethus etc and we have all adons
+
+# kubectl get svc -n istio-system
+
+
+promothus is for monitering
+grafana is for data visualization
+jaeger is for trace microservice request (how req go and to where etc)
+zipkin is alternative to jaeger
+
+kiali data visualization features
+
+
+# kubectl port-forward svc/kiali -n istio-system kialiport(20001)
+
+

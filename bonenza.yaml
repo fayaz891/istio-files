@@ -1,0 +1,41 @@
+apiVersion: networking.istio.io/v1beta1
+kind: Gateway
+metadata:
+  name: omni-app-bonanza-gateway
+  namespace: istio-system
+spec:
+  selector:
+    istio: ingressgateway
+  servers:
+  - hosts:
+    - omni-app-bonanza.xstak.com
+    port:
+      name: http
+      number: 80
+      protocol: HTTP
+  - hosts:
+    - omni-app-bonanza.xstak.com
+    port:
+      name: https
+      number: 443
+      protocol: HTTP
+---
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: omni-app-bonanza-alb
+  namespace: live
+spec:
+  gateways:
+  - istio-system/omni-app-bonanza-gateway
+  hosts:
+  - omni-app-bonanza.xstak.com
+  http:
+  - match:
+    - uri:
+        prefix: /
+    route:
+    - destination:
+        host: omni-app-pvt-bonanza-test
+        port:
+          number: 80

@@ -1,0 +1,88 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: retail-portal-vs
+spec:
+  hosts:
+  - retail.prod.svc.cluster.local
+
+  http:
+  - name: books-routes
+    match:
+    - uri:
+        prefix: /books
+    rewrite:
+      uri: "/"
+    route:
+    - destination:
+        host: books.prod.svc.cluster.local
+        subset: books-svc-subset
+
+  - name: electronic-routes
+    match:
+    - uri:
+        prefix: /electronics
+    rewrite:
+      uri: "/"    
+    route:
+    - destination:
+        host: electronic.prod.svc.cluster.local
+        subset: electronic-svc-subset
+
+  - name: retail-routes      # by default traffic routed here
+    route:
+    - destination:
+        host: retail.prod.svc.cluster.local
+        subset: retail-svc-subset      
+---
+# now we need 3 destination rules
+
+apiVersion: networking.istio.io/v1alpha3
+kind: DestinationRule
+metadata:
+  name: book-destination-rule
+  namespace: foo
+spec:
+  host: books.prod.svc.cluster.local
+  subsets:
+  - name: books-svc-subset
+    labels:
+      app: books
+      version: v1
+  trafficPolicy:
+    loadBalancer:
+      simple: ROUND_ROBIN
+---
+
+apiVersion: networking.istio.io/v1alpha3
+kind: DestinationRule
+metadata:
+  name: electronic-destination-rule
+  namespace: foo
+spec:
+  host: electronic.prod.svc.cluster.local
+  subsets:
+  - name: electronic-svc-subset
+    labels:
+      app: electronic
+      version: v1
+  trafficPolicy:
+    loadBalancer:
+      simple: ROUND_ROBIN
+---
+
+apiVersion: networking.istio.io/v1alpha3
+kind: DestinationRule
+metadata:
+  name: retail-destination-rule
+  namespace: foo
+spec:
+  host: retail.prod.svc.cluster.local
+  subsets:
+  - name: retail-svc-subset
+    labels:
+      app: retail
+      version: v1
+  trafficPolicy:
+    loadBalancer:
+      simple: ROUND_ROBIN

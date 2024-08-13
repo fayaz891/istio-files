@@ -1,0 +1,19 @@
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: order-routing-virtual
+  namespace: develop
+spec:
+  gateways:
+  - xss-dev-gateway.istio-system
+  hosts:
+  - xss-dev.xstak.com
+  http:
+  - match:
+    - uri:
+        prefix: /order-routing-svc
+    route:
+    - destination:
+        host: order-routing-svc-deployment
+        port:
+          number: 80

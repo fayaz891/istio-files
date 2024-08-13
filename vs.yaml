@@ -1,0 +1,41 @@
+apiVersion: networking.istio.io/v1beta1
+kind: Gateway
+metadata:
+  name: sc-shopping-assistant-gateway
+  namespace: istio-system
+spec:
+  selector:
+    istio: ingressgateway
+  servers:
+  - hosts:
+    - shopping-assistant.xstak.com
+    port:
+      name: http
+      number: 80
+      protocol: HTTP
+  - hosts:
+    - shopping-assistant.xstak.com
+    port:
+      name: https
+      number: 443
+      protocol: HTTP
+---
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: sc-shopping-assistant-vs
+  namespace: shopcast-prod
+spec:
+  gateways:
+  - istio-system/sc-shopping-assistant-gateway
+  hosts:
+  - shopping-assistant.xstak.com
+  http:
+  - match:
+    - uri:
+        prefix: /
+    route:
+    - destination:
+        host: sc-shopping-assistant
+        port:
+          number: 80

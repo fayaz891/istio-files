@@ -1,0 +1,44 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
+metadata:
+  name: xstak-link-shortner-gateway
+  namespace: istio-system
+spec:
+  selector:
+    istio: ingressgateway
+  servers:
+  - port:
+      number: 80
+      name: http
+      protocol: HTTP
+    hosts:
+    - link-live.xstak.com
+    tls:
+      httpsRedirect: true
+  - port:
+      number: 443
+      name: https
+      protocol: HTTPS
+    hosts:
+    - link-live.xstak.com  
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: xstak-link-shortner-vs
+  namespace: live
+spec:
+  hosts:
+  - link-live.xstak.com
+  gateways:
+  - xstak-link-shortner-gateway
+
+  http:
+  - match:
+    - uri:
+        prefix: /
+    route:
+    - destination:
+        host: xstak-link-shortner-app
+        port:
+          number: 80

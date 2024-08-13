@@ -1,0 +1,40 @@
+create a secret tls from cert.crt and private.key 
+
+kubectl create secret tls your-tls-secret-name --cert path/to/ca-bundle.crt --key path/to/private-key.key
+
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
+metadata:
+  name: your-gateway
+spec:
+  selector:
+    istio: ingressgateway # Use the appropriate selector for your Istio ingress gateway
+  servers:
+  - port:
+      number: 443
+      name: https
+      protocol: HTTPS
+    hosts:
+    - your-domain.com
+    tls:
+      mode: SIMPLE
+      credentialName: your-tls-secret-name # Reference the Kubernetes TLS Secret here
+
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: your-virtualservice
+spec:
+  hosts:
+  - your-domain.com
+  gateways:
+  - your-gateway # Reference the Istio Gateway created earlier
+  http:
+  - route:
+    - destination:
+        host: your-service-name
+        port:
+          number: 80
+

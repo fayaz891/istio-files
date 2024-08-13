@@ -1,0 +1,60 @@
+# traffic routes into 2 different services
+
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: istio-VirSvc
+spec:
+  hosts:
+  - app-svc.prod.svc.cluster.local #domain name
+
+  http:
+  - name: virtual-svc-routes
+  - route:
+    - destination:
+        host: app-svc.prod.svc.cluster.local #service distination i.e app.namespace.svc.cluster.local
+        subset: app-svc-subset
+      weight: 25
+
+    - destination:
+        host: app2-svc.prod.svc.cluster.local
+        subset: app2-svc-subset
+      weight: 75
+
+---
+
+apiVersion: networking.istio.io/v1alpha3
+kind: DestinationRule
+metadata:
+  name: destination-rule
+spec:
+  host: app-svc.prod.svc.cluster.local
+  subsets:
+  - name: app-svc-subset  #this name provided in subset of Virtual servce
+    labels:
+      version: v1
+      app: app
+      chapter: istio
+      topic: traffic-management
+    trafficPolicy:
+      loadBalancer:
+        simple: ROUND_ROBIN  
+  
+---
+
+apiVersion: networking.istio.io/v1alpha3
+kind: DestinationRule
+metadata:
+  name: destination-rule
+spec:
+  host: app2-svc.prod.svc.cluster.local
+  subsets:
+  - name: app2-svc-subset  #this name provided in subset of Virtual servce
+    labels:
+      version: v1
+      app: app
+      chapter: istio
+      topic: traffic-management
+    trafficPolicy:
+      loadBalancer:
+        simple: ROUND_ROBIN  

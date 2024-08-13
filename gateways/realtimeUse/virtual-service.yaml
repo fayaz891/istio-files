@@ -1,0 +1,19 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: oe-woocommerce-service
+  namespace: biz-dev
+spec:
+  hosts:
+  - api-oe-biz-dev.xstak.com
+  gateways:
+  - woocommerce-integration-gateway
+  http:
+  - match:
+    - uri:
+        prefix: /
+    route:
+    - destination:
+        host: oe-woocommerce-service #SERVICE NAME
+        port:
+          number: 80

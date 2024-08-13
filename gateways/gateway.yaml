@@ -1,0 +1,24 @@
+
+apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
+metadata:
+  name: istio-ingress-gateway
+spec:
+  selector:   # it select those pods which provided by istio installation
+    istio: ingressgateway # use Istio default gateway implementation
+    app: ingressgateway
+  servers:
+  - port:
+      number: 80    #the port no. of gw must hv in these numbers 80,443,15020,15029,15030,15031,15032,15443,31400. without these it not worked when using istio getway
+      name: app
+      protocol: HTTP
+    hosts:
+    - "deep.com"
+
+# if expose two different services with same gateways add this here and in VS-file add vs of abc.com
+  - port:
+      number: 80
+      name: app
+      protocol: HTTP
+    hosts:
+    - "abc.com"  

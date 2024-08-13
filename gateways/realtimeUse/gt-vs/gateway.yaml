@@ -1,0 +1,104 @@
+
+apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
+metadata:
+  name: xss-dev-gateway
+  namespace: istio-system
+spec:
+  selector:
+    istio: ingressgateway
+  servers:
+  - port:
+      number: 80
+      name: http
+      protocol: HTTP
+    hosts:
+    - xss-dev.xstak.com
+    tls:
+      httpsRedirect: true
+  - port:
+      number: 443
+      name: https
+      protocol: HTTPS
+    hosts:
+    - xss-dev.xstak.com  
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: routing-svc
+  namespace: develop
+spec:
+  hosts:
+  - xss-dev.xstak.com
+  gateways:
+  - xss-dev-gateway
+
+  http:
+  - match:
+    - uri:
+        prefix: /order-routing-svc
+    route:
+    - destination:
+        host: order-routing-svc.develop.svs.cluster.local
+        port:
+          number: 80
+
+---
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: SERVICE_NAME
+  name: SERVICE_NAME-deployment
+  namespace: NAME_SPACE
+spec:
+  # replicas: 1
+  selector:
+    matchLabels:
+      app: SERVICE_NAME
+  template:
+    metadata:
+      labels:
+        app: SERVICE_NAME
+    spec:
+      containers:
+      - image: AWS_ACCOUNT_ID.dkr.ecr.AWS_DEFAULT_REGION.amazonaws.com/IMAGE_REPO_NAME:IMAGE_TAG
+        imagePullPolicy: IfNotPresent
+        name: SERVICE_NAME
+        # resources: {}
+        ports:
+        - containerPort: SERVICE_PORT
+        env:
+        - name: NODE_ENV
+          value: NODE_ENV_VALUE
+        - name: MONGO_DB_USERNAME
+          value: MONGO_DB_USERNAME_VALUE
+        - name: MONGO_DB_PASSWORD
+          value: MONGO_DB_PASSWORD_VALUE
+        - name: MONGO_DB_CLUSTER
+          value: MONGO_DB_CLUSTER_VALUE
+        - name: MONGO_DB_NAME
+          value: MONGO_DB_NAME_VALUE
+        - name: REDIS_SERVER_URL
+          value: REDIS_SERVER_URL_VALUE
+                    
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: SERVICE_NAME
+  name: SERVICE_NAME
+  namespace: NAME_SPACE
+spec:
+  ports:
+  - port: 80
+    name: http-SERVICE_NAME
+    protocol: TCP
+    targetPort: SERVICE_PORT
+  selector:
+    app: SERVICE_NAME
+  type: NodePort

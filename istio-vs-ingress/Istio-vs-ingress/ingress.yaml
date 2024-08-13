@@ -1,0 +1,433 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: oe-auth-ingress
+  namespace: oe-dev
+  annotations:
+    nginx.ingress.kubernetes.io/use-regex: "true"
+spec:
+  rules:
+  - host: api-oe-local-dev.xstak.com
+    http:
+      paths:
+      - path: /oauth
+        pathType: Prefix
+        backend:
+          service:
+            name: oe-auth
+            port:
+              number: 80
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: oe-replenishment-system-ingress
+  namespace: oe-dev
+  annotations:
+    nginx.ingress.kubernetes.io/use-regex: "true"
+spec:
+  rules:
+  - host: api-oe-local-dev.xstak.com
+    http:
+      paths:
+      - path: /replenishment
+        pathType: Prefix
+        backend:
+          service:
+            name: replenishment-system
+            port:
+              number: 80
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: oe-bi-engine-ingress
+  namespace: oe-dev
+  annotations:
+    nginx.ingress.kubernetes.io/use-regex: "true"
+spec:
+  rules:
+  - host: api-oe-local-dev.xstak.com
+    http:
+      paths:
+      - path: /cubejs/
+        pathType: Prefix
+        backend:
+          service:
+            name: bi-engine
+            port:
+              number: 80
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: courier-tracking-ingress
+  namespace: oe-dev
+  annotations:
+    nginx.ingress.kubernetes.io/use-regex: "true"
+spec:
+  rules:
+  - host: api-oe-local-dev.xstak.com
+    http:
+      paths:
+      - path: /tracking/courierScheduler
+        pathType: Prefix
+        backend:
+          service:
+            name: courier-tracking-service
+            port:
+              number: 80
+      - path: /track/.*/history/.*
+        pathType: Prefix
+        backend:
+          service:
+            name: courier-tracking-service
+            port:
+              number: 80
+      - path: /orders/.*/track
+        pathType: Prefix
+        backend:
+          service:
+            name: courier-tracking-service
+            port:
+              number: 80                
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: oe-editordertransition-ingress
+  namespace: oe-dev
+  annotations:
+    nginx.ingress.kubernetes.io/use-regex: "true"
+spec:
+  rules:
+  - host: api-oe-local-dev.xstak.com
+    http:
+      paths:
+      - path: /orders/.*/item/*
+        pathType: Prefix
+        backend:
+          service:
+            name: oe-editordertransition-service
+            port:
+              number: 80
+      - path: /orders/.*/(editbyebm|editbysm)
+        pathType: Prefix
+        backend:
+          service:
+            name: oe-editordertransition-service
+            port:
+              number: 80
+      - path: /orders/.*/(updateordersm|updateorderebm)
+        pathType: Prefix
+        backend:
+          service:
+            name: oe-editordertransition-service
+            port:
+              number: 80
+      - path: /orders/.*/split
+        pathType: Prefix
+        backend:
+          service:
+            name: oe-editordertransition-service
+            port:
+              number: 80
+      - path: /orders/.*/(manualSplit|getManualSplitLocations)
+        pathType: Prefix
+        backend:
+          service:
+            name: oe-editordertransition-service
+            port:
+              number: 80
+      - path: /orders/.*/addComment
+        pathType: Prefix
+        backend:
+          service:
+            name: oe-editordertransition-service
+            port:
+              number: 80
+      - path: /orders/.*/updateTag
+        pathType: Prefix
+        backend:
+          service:
+            name: oe-editordertransition-service
+            port:
+              number: 80
+      - path: /orders/.*/split/reassign
+        pathType: Prefix
+        backend:
+          service:
+            name: oe-editordertransition-service
+            port:
+              number: 80                                                        
+      - path: /orders/.*/getSkuAvailability*
+        pathType: Prefix
+        backend:
+          service:
+            name: oe-editordertransition-service
+            port:
+              number: 80
+      - path: /orders/.*/checkStoreQuantity
+        pathType: Prefix
+        backend:
+          service:
+            name: oe-editordertransition-service
+            port:
+              number: 80
+      - path: /orders/.*/updateeditedorderwithoutinventory
+        pathType: Prefix
+        backend:
+          service:
+            name: oe-editordertransition-service
+            port:
+              number: 80
+      - path: /orders/.*/splitItemsQuantity
+        pathType: Prefix
+        backend:
+          service:
+            name: oe-editordertransition-service
+            port:
+              number: 80
+      - path: /orders/.*/getItemSplitLocations
+        pathType: Prefix
+        backend:
+          service:
+            name: oe-editordertransition-service
+            port:
+              number: 80
+      - path: /orders/shopify/createEditedOrder
+        pathType: Prefix
+        backend:
+          service:
+            name: oe-editordertransition-service
+            port:
+              number: 80
+      - path: /orders/updateOrderSku
+        pathType: Prefix
+        backend:
+          service:
+            name: oe-editordertransition-service
+            port:
+              number: 80  
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: oe-arch-order-ingress
+  namespace: oe-dev
+  annotations:
+    nginx.ingress.kubernetes.io/use-regex: "true"
+spec:
+  rules:
+  - host: api-oe-local-dev.xstak.com
+    http:
+      paths:
+      - path: /users/
+        pathType: Prefix
+        backend:
+          service:
+            name: oe-order-service
+            port:
+              number: 80
+      - path: /monitoring/
+        pathType: Prefix
+        backend:
+          service:
+            name: oe-order-service
+            port:
+              number: 80
+      - path: /backup/loadBrand
+        pathType: Prefix
+        backend:
+          service:
+            name: oe-order-service
+            port:
+              number: 80
+      - path: /backup/loadBrandChannel
+        pathType: Prefix
+        backend:
+          service:
+            name: oe-order-service
+            port:
+              number: 80
+      - path: /backup/loadLocation
+        pathType: Prefix
+        backend:
+          service:
+            name: oe-order-service
+            port:
+              number: 80
+      - path: /backup/cancellationReason
+        pathType: Prefix
+        backend:
+          service:
+            name: oe-order-service
+            port:
+              number: 80
+      - path: /backup/
+        pathType: Prefix
+        backend:
+          service:
+            name: oe-order-service
+            port:
+              number: 80
+      - path: /orders/getSkuOrderLevelDetail
+        pathType: Prefix
+        backend:
+          service:
+            name: oe-order-service
+            port:
+              number: 80
+      - path: /orders/generateReplenishmentReport
+        pathType: Prefix
+        backend:
+          service:
+            name: oe-order-service
+            port:
+              number: 80
+      - path: /backup/addComment
+        pathType: Prefix
+        backend:
+          service:
+            name: oe-order-service
+            port:
+              number: 80
+      - path: /searchOrdersBySku
+        pathType: Prefix
+        backend:
+          service:
+            name: oe-order-service
+            port:
+              number: 80
+      - path: /backup/addOrderBrandDetails
+        pathType: Prefix
+        backend:
+          service:
+            name: oe-order-service
+            port:
+              number: 80                                        
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: oe-editordertransition-ingress
+  namespace: oe-dev
+  annotations:
+    nginx.ingress.kubernetes.io/use-regex: "true"
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: api-oe-local-dev.xstak.com
+    http:
+      paths:
+      - path: /orders/.*/item/.*
+        pathType: Prefix
+        backend:
+          service:
+            name: oe-editordertransition-service
+            port:
+              number: 80
+      - path: /orders/.*(editbyebm|editbysm)
+        pathType: Prefix
+        backend:
+          service:
+            name: oe-editordertransition-service
+            port:
+              number: 80
+      - path: /orders/.*/(updateordersm|updateorderebm)
+        pathType: Prefix
+        backend:
+          service:
+            name: oe-editordertransition-service
+            port:
+              number: 80
+      - path: /orders/.*/split
+        pathType: Prefix
+        backend:
+          service:
+            name: oe-editordertransition-service
+            port:
+              number: 80
+      - path: /orders/.*/(manualSplit|getManualSplitLocations)
+        pathType: Prefix
+        backend:
+          service:
+            name: oe-editordertransition-service
+            port:
+              number: 80
+      - path: /orders*/*/addComment
+        pathType: Prefix
+        backend:
+          service:
+            name: oe-editordertransition-service
+            port:
+              number: 80
+      - path: /orders/.*/updateTag
+        pathType: Prefix
+        backend:
+          service:
+            name: oe-editordertransition-service
+            port:
+              number: 80
+      - path: /orders/.*/split/reassign
+        pathType: Prefix
+        backend:
+          service:
+            name: oe-editordertransition-service
+            port:
+              number: 80                                                        
+      - path: /orders/.*/getSkuAvailability*
+        pathType: Prefix
+        backend:
+          service:
+            name: oe-editordertransition-service
+            port:
+              number: 80
+      - path: /orders/.*/checkStoreQuantity
+        pathType: Prefix
+        backend:
+          service:
+            name: oe-editordertransition-service
+            port:
+              number: 80
+      - path: /orders/.*/updateeditedorderwithoutinventory
+        pathType: Prefix
+        backend:
+          service:
+            name: oe-editordertransition-service
+            port:
+              number: 80
+      - path: /orders/.*/splitItemsQuantity
+        pathType: Prefix
+        backend:
+          service:
+            name: oe-editordertransition-service
+            port:
+              number: 80
+      - path: /orders/.*/getItemSplitLocations
+        pathType: Prefix
+        backend:
+          service:
+            name: oe-editordertransition-service
+            port:
+              number: 80
+      - path: /orders/shopify/createEditedOrder
+        pathType: Prefix
+        backend:
+          service:
+            name: oe-editordertransition-service
+            port:
+              number: 80
+      - path: /orders/updateOrderSku
+        pathType: Prefix
+        backend:
+          service:
+            name: oe-editordertransition-service
+            port:
+              number: 80                                                
+  tls:
+  - hosts:
+    - api-oe-local-dev.xstak.com
+    secretName: oe-local-dev-tls
+
+and so on.......

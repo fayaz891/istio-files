@@ -1,0 +1,47 @@
+
+
+chellenges in microservices are solve by "service Mesh" (a pattren) and Istio (is implementation)
+so is istio implementation of service mesh
+or istio is a service mesh
+
+service mesh is using to manage cumunication between microservices
+
+exmple => lets we hv shoping application and we have sevral microservices like webserver(handle UI req), payment(handle pymnt req), shopcart etc
+so what does configuration need for these services
+1) Business Logic => e.g webserver hndle UI req, payment hndle payment logic etc
+2) cumunicaion configuration => how they cumunicate, how they know endpoint of each service for cuminication
+3) security logic => on cluster we hv security firewall but inside cluster cuminication are not secured,and each service freely cumunicate to eachother e.g online banking this type of security v.necessary
+4) matrics and tracing logic
+
+developer solve these all are separtly for each service is very complex process
+so the sloution is service mesh 
+
+"sidecar proxy" is the third party application which handle all these networking logics and act as a proxy amoung services
+
+we dont need yml file for sidecar configuration,bc service mesh has a control plane which automatically inject proxy container to each microservices pods and now each pod can talk through these proxy
+
+the network layer btw pods are called control plane and the "proxy contanr" in pod is called service mesh 
+
+
+the control plane of istio is "istiod" which inject "envoy proxy" to each service
+istio has control plane which istiod and "data plane" which group of proxy
+
+istiod(control plane) enject proxy to each microservices(data plane)
+for configuration of istio we donot need to adjust deployment file or service file, it is seperate configuration from application
+istio uses k8s CRD(custom resiource definition)
+
+custom k8s component like istio ,promethous (third party technologies)
+
+there are 2 CRD to configure service to service configuration 
+1) virtual service => how to route trafic to given distnation
+2) destination role => what happen to trafic for that distanation
+
+dynamic service discovery when new microservice are registered 
+
+
+***istio ingress gateway***
+it is entry point to your cluster
+it is alternative to nginx-ingress-controller
+
+istio gateway is run as a pod in the cluster and act as a laodBalancer to accept incoming traffic to the cluster
+so gateway directed trafic to the microservices using virtual services

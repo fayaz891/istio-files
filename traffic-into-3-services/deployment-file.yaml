@@ -1,0 +1,122 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: book-depl
+  labels:
+    app: books
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: books
+  template:
+    metadata:
+      name: books-pod
+      labels:
+        app: books
+    spec:
+      containers:
+      - name: books-cont
+        image: nginx:1.14.2
+        ports:
+        - containerPort: 80
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: books-svc
+  labels:
+    app: books
+spec:
+  type: ClusterIP
+  selector:
+    app: books
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 80
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: electonic-depl
+  labels:
+    app: electronic
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: electronic
+  template:
+    metadata:
+      name: electronic-pod
+      labels:
+        app: electronic
+    spec:
+      containers:
+      - name: electronic-cont
+        image: nginx:1.14.2
+        ports:
+        - containerPort: 80
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: electronic-svc
+  labels:
+    app: electronic
+spec:
+  type: ClusterIP
+  selector:
+    app: electronic
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 80
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: retail-depl
+  labels:
+    app: retail
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: retail
+  template:
+    metadata:
+      name: retail-pod
+      labels:
+        app: retail
+    spec:
+      containers:
+      - name: retail-cont
+        image: nginx:1.14.2
+        ports:
+        - containerPort: 80
+
+---
+
+piVersion: v1
+kind: Service
+metadata:
+  name: retail-svc
+  labels:
+    app: retail
+spec:
+  type: ClusterIP
+  selector:
+    app: retail
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 80

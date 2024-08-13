@@ -1,0 +1,117 @@
+# Create 2 services and traffic are devided/routed into 2 different services
+# kubectl create -f istio-service.yaml -n prod
+# kubectl get svc -n prod
+# curl <cluster ip>:8080
+# kubectl get pods -n kube-system - wide
+# kubectl get vs -n prod
+# kubectl describe vs istio-VirSvc -n prod
+# kubectl get dr -n prod
+# kubectl describe dr -n prod
+
+
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app-deployment
+  labels:
+    app: app
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: app
+      chapter: istio
+      topic: traffic-management
+      version: v2
+  template:
+    metadata:
+      name: app-pod
+      labels:
+        app: app
+        chapter: istio
+        topic: traffic-management
+        version: v2
+    spec:
+      containers:
+      - name: app-container
+        image: nginx:1.14.2
+        ports:
+        - containerPort: 8080
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: app-service
+  labels:
+    app: app
+    chapter: istio
+    topic: traffic-management
+    version: v2
+spec:
+  type: ClusterIP
+  selector:
+    app: app
+    chapter: istio
+    topic: traffic-management
+    version: v2
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 9376
+
+---
+
+piVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app2-deployment
+  labels:
+    app: app2
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: app2
+      chapter: istio
+      topic: traffic-management
+      version: v2
+  template:
+    metadata:
+      name: app2-pod
+      labels:
+        app: app2
+        chapter: istio
+        topic: traffic-management
+        version: v2
+    spec:
+      containers:
+      - name: app2-container
+        image: nginx:1.14.2
+        ports:
+        - containerPort: 8081
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: app2-service
+  labels:
+    app: app2
+    chapter: istio
+    topic: traffic-management
+    version: v2
+spec:
+  type: ClusterIP
+  selector:
+    app: app2
+    chapter: istio
+    topic: traffic-management
+    version: v2
+  ports:
+    - protocol: TCP
+      port: 8081
+      targetPort: 9376
